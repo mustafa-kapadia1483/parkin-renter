@@ -1,4 +1,10 @@
 import { ref, child, get } from 'firebase/database';
+import {
+  GoogleAuthProvider,
+  getAuth,
+  signInWithPopup,
+  onAuthStateChanged,
+} from 'firebase/auth';
 import database from '../firebase';
 import {
   chakra,
@@ -6,7 +12,6 @@ import {
   GridItem,
   useColorModeValue,
   Button,
-  Stack,
   Center,
   Flex,
   Icon,
@@ -14,20 +19,50 @@ import {
   VisuallyHidden,
   Input,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
-const KuttyHero = () => {
-  const dbRef = ref(database);
-  get(child(dbRef, `users`))
-    .then(snapshot => {
-      if (snapshot.exists()) {
-        console.log(snapshot.val());
-      } else {
-        console.log('No data available');
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
+const Home = () => {
+  const navigate = useNavigate();
+  const provider = new GoogleAuthProvider();
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (user) {
+    navigate('/dashboard', { replace: true });
+  }
+  const googleSignInHandler = () => {
+    signInWithPopup(auth, provider)
+      .then(result => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        navigate('/dashboard', { replace: true });
+        // ...
+      })
+      .catch(error => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
+  // const dbRef = ref(database);
+  // get(child(dbRef, `users`))
+  //   .then(snapshot => {
+  //     if (snapshot.exists()) {
+  //       console.log(snapshot.val());
+  //     } else {
+  //       console.log('No data available');
+  //     }
+  //   })
+  //   .catch(error => {
+  //     console.error(error);
+  //   });
+
   return (
     <Box px={8} py={24} mx="auto">
       <SimpleGrid
@@ -112,6 +147,7 @@ const KuttyHero = () => {
                 py={2}
                 w="full"
                 colorScheme="blue"
+                onClick={googleSignInHandler}
                 leftIcon={
                   <Icon
                     mr={1}
@@ -142,4 +178,4 @@ const KuttyHero = () => {
   );
 };
 
-export default KuttyHero;
+export default Home;
