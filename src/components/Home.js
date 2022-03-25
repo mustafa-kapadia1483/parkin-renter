@@ -84,7 +84,7 @@ const Home = () => {
             color={useColorModeValue('gray.900', 'gray.200')}
             letterSpacing={{ base: 'normal', md: 'tight' }}
           >
-            Ready to start your journey?
+            Become a Parking Space Renter with ParkIn
           </chakra.h1>
           <chakra.p
             mb={{ base: 10, md: 4 }}
@@ -93,15 +93,14 @@ const Home = () => {
             color="gray.500"
             letterSpacing="wider"
           >
-            Low-latency voice and video feels like you’re in the same room. Wave
-            hello over video, watch friends stream their games, or gather up and
-            have a drawing session with screen share.
+            Convert your unused open parking spaces into a income source with
+            the help of ParkIn
           </chakra.p>
         </GridItem>
         <GridItem colSpan={{ base: 'auto', md: 4 }}>
           <Box as="form" mb={6} rounded="lg" shadow="xl">
             <Center pb={0} color={useColorModeValue('gray.700', 'gray.600')}>
-              <p pt={2}>Start talking now</p>
+              <p pt={2}>Start renting now</p>
             </Center>
             <SimpleGrid
               columns={1}
