@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Drawer,
   DrawerContent,
   DrawerOverlay,
@@ -10,6 +11,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Link,
   Text,
   useColorModeValue,
   useDisclosure,
@@ -20,16 +22,37 @@ import { MdHome } from 'react-icons/md';
 import { GoSettings } from 'react-icons/go';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { getAuth } from 'firebase/auth';
-import { Link, Outlet } from 'react-router-dom';
+import { Link as ReactRouterLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const auth = getAuth();
-  const user = auth.currentUser;
+  const [user, setUser] = useState(null);
   const sidebar = useDisclosure();
   const color = useColorModeValue('gray.600', 'gray.300');
 
-  const NavItem = props => {
-    const { icon, children, ...rest } = props;
+  useEffect(() => {
+    if (localStorage.getItem('user')) {
+      setUser(JSON.parse(localStorage.getItem('user')));
+      return;
+    }
+
+    if (!auth.currentUser) {
+      navigate('/', { replace: true });
+    } else {
+      setUser(auth.currentUser);
+    }
+  }, []);
+
+  const logoutButtonHandler = () => {
+    localStorage.removeItem('user');
+    auth.signOut().then(() => {
+      navigate('/', { replace: true });
+    });
+  };
+
+  const NavItem = ({ to, link, icon, children, ...rest }) => {
     return (
       <Flex
         align="center"
@@ -57,7 +80,14 @@ const Dashboard = () => {
             as={icon}
           />
         )}
-        {children}
+        <Link
+          as={link}
+          to={to}
+          _focus={{ outline: 'none' }}
+          _activeLink={{ color: useColorModeValue('white', 'black') }}
+        >
+          {children}
+        </Link>
       </Flex>
     );
   };
@@ -97,12 +127,16 @@ const Dashboard = () => {
         color="gray.600"
         aria-label="Main Navigation"
       >
-        <Link to="/dashboard">
-          <NavItem icon={MdHome}>Home</NavItem>
-        </Link>
-        <Link to="/dashboard/manage-parking-lots">
-          <NavItem icon={GoSettings}>Manage Parking Lots</NavItem>
-        </Link>
+        <NavItem link={ReactRouterLink} to="/dashboard" icon={MdHome}>
+          Home
+        </NavItem>
+        <NavItem
+          link={ReactRouterLink}
+          to="/dashboard/manage-parking-lots"
+          icon={GoSettings}
+        >
+          Manage Parking Lots
+        </NavItem>
         {/* <NavItem icon={HiCode} onClick={integrations.onToggle}>
           Integrations
           <Icon
@@ -172,11 +206,14 @@ const Dashboard = () => {
           <HStack align="center" spacing={5}>
             <ColorModeSwitcher />
             <Icon color="gray.500" as={FaBell} cursor="pointer" />
+            <Button variant="outline" onClick={logoutButtonHandler}>
+              Logout
+            </Button>
           </HStack>
         </Flex>
 
         <Box as="main" p="4">
-          <Outlet context={user} />
+          {user && <Outlet context={user} />}
         </Box>
       </Box>
     </Box>

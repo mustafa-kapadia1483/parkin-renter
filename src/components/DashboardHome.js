@@ -7,7 +7,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { child, get, ref, set } from 'firebase/database';
 import database from '../firebase';
@@ -31,7 +31,7 @@ export default function DashboardHome() {
       .catch(error => {
         console.error(error);
       });
-  }, []);
+  }, [uid]);
 
   const updateRenterInfo = () => {
     set(ref(database, 'renters/' + uid + '/personalInfo'), {
@@ -68,7 +68,12 @@ export default function DashboardHome() {
       </TitledCard>
       <TitledCard title={'Parking Lots:'}>
         <ParkingLotList uid={uid} />
-        <Button alignSelf={'center'}>Manage Parking Lots</Button>
+        <Link
+          to="/dashboard/manage-parking-lots"
+          style={{ alignSelf: 'center' }}
+        >
+          <Button>Manage Parking Lots</Button>
+        </Link>
       </TitledCard>
     </VStack>
   );

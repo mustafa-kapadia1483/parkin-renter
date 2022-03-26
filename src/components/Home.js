@@ -1,11 +1,5 @@
 import { ref, child, get } from 'firebase/database';
-import {
-  GoogleAuthProvider,
-  getAuth,
-  signInWithPopup,
-  onAuthStateChanged,
-} from 'firebase/auth';
-import database from '../firebase';
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 import {
   chakra,
   Box,
@@ -20,12 +14,14 @@ import {
   Input,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
   const user = auth.currentUser;
+  useEffect(() => {}, []);
   if (user) {
     navigate('/dashboard', { replace: true });
   }
@@ -35,6 +31,8 @@ const Home = () => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
+        const user = result.user;
+        localStorage.setItem('user', JSON.stringify(user));
         // The signed-in user info.
         navigate('/dashboard', { replace: true });
         // ...

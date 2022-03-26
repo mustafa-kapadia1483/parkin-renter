@@ -11,7 +11,7 @@ const ParkingLotList = ({ uid }) => {
     onValue(parkingLotsRef, snapshot => {
       setParkingLots(snapshot.val());
     });
-  }, []);
+  }, [uid]);
 
   return (
     <HStack spacing={5}>
