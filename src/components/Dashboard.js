@@ -1,25 +1,18 @@
 import {
   Box,
-  Button,
-  Collapse,
   Drawer,
   DrawerContent,
   DrawerOverlay,
   Flex,
-  FormControl,
-  FormLabel,
   HStack,
   Icon,
   IconButton,
   Input,
   InputGroup,
   InputLeftElement,
-  Stack,
   Text,
   useColorModeValue,
   useDisclosure,
-  useToast,
-  VStack,
 } from '@chakra-ui/react';
 import { FaBell } from 'react-icons/fa';
 import { FiMenu, FiSearch } from 'react-icons/fi';
@@ -27,147 +20,13 @@ import { MdHome } from 'react-icons/md';
 import { GoSettings } from 'react-icons/go';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { getAuth } from 'firebase/auth';
-import { ref, set, get, child, push } from 'firebase/database';
-import database from '../firebase';
-import { useState, useEffect } from 'react';
-import TitledCard from './TitledCard';
-import ParkingLotList from './ParkingLotList';
-
-const DashboardHome = ({ uid, email, renterData }) => {
-  const toast = useToast();
-  const [name, setName] = useState(renterData.personalInfo.name);
-  const { parkingLots } = renterData;
-  const updateRenterInfo = () => {
-    set(ref(database, 'renters/' + uid + '/personalInfo'), {
-      name: name,
-    }).then(() => {
-      toast({
-        title: `Name Updated Successfully`,
-        status: 'success',
-        isClosable: true,
-      });
-    });
-  };
-
-  return (
-    <VStack spacing={5}>
-      <TitledCard title="Personal Information:">
-        <Stack direction={{ lg: 'row' }}>
-          <FormControl isRequired>
-            <FormLabel htmlFor="renter-name">Renter Name:</FormLabel>
-            <Input
-              value={name}
-              onChange={e => setName(e.target.value)}
-              id="renter-name"
-            />
-          </FormControl>
-          <FormControl isDisabled>
-            <FormLabel htmlFor="email">Registered Email:</FormLabel>
-            <Input id="email" value={email} isReadOnly />
-          </FormControl>
-        </Stack>
-        <Button alignSelf="flex-end" onClick={updateRenterInfo}>
-          Update
-        </Button>
-      </TitledCard>
-      <TitledCard title={'Parking Lots:'}>
-        {parkingLots && <ParkingLotList parkingLots={parkingLots} />}
-        {!parkingLots && <Text>No Parking Lots Found</Text>}
-        <Button alignSelf={'center'}>Manage Parking Lots</Button>
-      </TitledCard>
-    </VStack>
-  );
-};
-
-const ManageParkingLots = ({ uid, parkingLots }) => {
-  const toast = useToast();
-  const [parkingLotName, setParkingLotName] = useState();
-  const [parkingLatitude, setParkingLatitude] = useState();
-  const [parkingLongitude, setParkingLongitude] = useState();
-  const createParkingLot = () => {
-    if (!parkingLotName || !setParkingLatitude || !parkingLongitude) {
-      toast({
-        title: `Please enter all the details`,
-        status: 'error',
-        isClosable: true,
-      });
-    }
-    const parkingLotsListRef = ref(database, `renters/${uid}/parkingLots`);
-    const newParkingLotRef = push(parkingLotsListRef);
-    set(newParkingLotRef, {
-      name: parkingLotName,
-      latitude: parkingLatitude,
-      longitude: parkingLongitude,
-    });
-  };
-  console.log(parkingLotName);
-  return (
-    <VStack>
-      <TitledCard title={'Parking Lots:'}>
-        <ParkingLotList parkingLots={parkingLots} />
-      </TitledCard>
-      <TitledCard title="Create New Parking Lot">
-        <Stack direction={{ lg: 'row' }}>
-          <FormControl isRequired>
-            <FormLabel htmlFor="parking-lot-name">Parking Lot Name:</FormLabel>
-            <Input
-              id="parking-lot-name"
-              onChange={e => setParkingLotName(e.target.value)}
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel htmlFor="parking-lot-latitude">
-              Parking Latitude:
-            </FormLabel>
-            <Input
-              id="parking-lot-latitude"
-              onChange={e => setParkingLatitude(e.target.value)}
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel htmlFor="parking-lot-longitude">
-              Parking Longitude:
-            </FormLabel>
-            <Input
-              id="parking-lot-longitude"
-              onChange={e => setParkingLongitude(e.target.value)}
-            />
-          </FormControl>
-        </Stack>
-        <Button alignSelf="flex-end" onClick={createParkingLot}>
-          Create Parking Lot
-        </Button>
-      </TitledCard>
-    </VStack>
-  );
-};
+import { Link, Outlet } from 'react-router-dom';
 
 const Dashboard = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   const sidebar = useDisclosure();
   const color = useColorModeValue('gray.600', 'gray.300');
-  const { uid, email } = user;
-  const [activeNav, setActiveNav] = useState('Home');
-  const [renterData, setRenterData] = useState(null);
-
-  useEffect(() => {
-    get(child(ref(database), `renters/${uid}`))
-      .then(snapshot => {
-        if (snapshot.exists()) {
-          setRenterData(snapshot.val());
-        } else {
-          console.log('No data available');
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, []);
-
-  const navItemOnClickHandler = e => {
-    setActiveNav(e.target.innerText);
-  };
 
   const NavItem = props => {
     const { icon, children, ...rest } = props;
@@ -238,12 +97,12 @@ const Dashboard = () => {
         color="gray.600"
         aria-label="Main Navigation"
       >
-        <NavItem icon={MdHome} onClick={navItemOnClickHandler}>
-          Home
-        </NavItem>
-        <NavItem icon={GoSettings} onClick={navItemOnClickHandler}>
-          Manage Parking Lots
-        </NavItem>
+        <Link to="/dashboard">
+          <NavItem icon={MdHome}>Home</NavItem>
+        </Link>
+        <Link to="/dashboard/manage-parking-lots">
+          <NavItem icon={GoSettings}>Manage Parking Lots</NavItem>
+        </Link>
         {/* <NavItem icon={HiCode} onClick={integrations.onToggle}>
           Integrations
           <Icon
@@ -266,6 +125,7 @@ const Dashboard = () => {
       </Flex>
     </Box>
   );
+
   return (
     <Box
       as="section"
@@ -316,18 +176,7 @@ const Dashboard = () => {
         </Flex>
 
         <Box as="main" p="4">
-          {/* Add content here, remove div below  */}
-          {activeNav === 'Home' && renterData && (
-            <DashboardHome
-              user={user}
-              uid={uid}
-              email={email}
-              renterData={renterData}
-            />
-          )}
-          {activeNav === 'Manage Parking Lots' && renterData && (
-            <ManageParkingLots parkingLots={renterData.parkingLots} uid={uid} />
-          )}
+          <Outlet context={user} />
         </Box>
       </Box>
     </Box>
