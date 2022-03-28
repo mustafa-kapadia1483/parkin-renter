@@ -21,7 +21,9 @@ const Home = () => {
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
   const user = auth.currentUser;
-  useEffect(() => {}, []);
+  if (localStorage.getItem('user')) {
+    navigate('/dashboard', { replace: true });
+  }
   if (user) {
     navigate('/dashboard', { replace: true });
   }
