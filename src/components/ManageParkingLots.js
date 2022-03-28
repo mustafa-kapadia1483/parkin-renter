@@ -26,6 +26,8 @@ export default function ManageParkingLots() {
   const [parkingBikeCapacity, setParkingBikeCapacity] = useState();
   const [parkingStreetAddress, setParkingStreetAddress] = useState();
   const [parkingLocality, setParkingLocality] = useState();
+  const [parkingCity, setParkingCity] = useState();
+  const [parkingPrice, setParkingPrice] = useState();
   const [parkingLandmark, setParkingLandmark] = useState();
   const [parkingPincode, setParkingPincode] = useState();
   const { uid } = useOutletContext();
@@ -59,7 +61,9 @@ export default function ManageParkingLots() {
         locality: parkingLocality,
         landmark: parkingLandmark,
         pincode: parkingPincode,
+        city: parkingCity,
       },
+      price: parkingPrice,
     }).then(() => {
       toast({
         title: `${parkingName} created`,
@@ -78,7 +82,7 @@ export default function ManageParkingLots() {
           <Grid
             width="full"
             templateColumns={{ lg: 'repeat(5, 1fr)' }}
-            templateRows={{ lg: 'repeat(2, 1fr)' }}
+            autoRows
             gap={4}
           >
             <GridItem>
@@ -112,6 +116,15 @@ export default function ManageParkingLots() {
             </GridItem>
             <GridItem>
               <FormControl isRequired>
+                <FormLabel htmlFor="parking-lot-city">City:</FormLabel>
+                <Input
+                  id="parking-lot-street-city"
+                  onChange={e => setParkingCity(e.target.value)}
+                />
+              </FormControl>
+            </GridItem>
+            <GridItem>
+              <FormControl isRequired>
                 <FormLabel htmlFor="parking-lot-Pincode">Pincode:</FormLabel>
                 <Input
                   id="parking-lot-street-pincode"
@@ -126,34 +139,6 @@ export default function ManageParkingLots() {
                   id="parking-lot-street-landmark"
                   onChange={e => setParkingLandmark(e.target.value)}
                 />
-              </FormControl>
-            </GridItem>
-            <GridItem>
-              <FormControl isRequired>
-                <FormLabel htmlFor="parking-lot-latitude">Latitude:</FormLabel>
-                <NumberInput
-                  id="parking-lot-latitude"
-                  onChange={valueAsNumber => setParkingLatitude(valueAsNumber)}
-                  min={-90}
-                  max={90}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-            </GridItem>
-            <GridItem>
-              <FormControl isRequired>
-                <FormLabel htmlFor="parking-lot-longitude">
-                  Longitude:
-                </FormLabel>
-                <NumberInput
-                  id="parking-lot-longitude"
-                  onChange={valueAsNumber => setParkingLongitude(valueAsNumber)}
-                  min={-180}
-                  max={180}
-                >
-                  <NumberInputField />
-                </NumberInput>
               </FormControl>
             </GridItem>
             <GridItem>
@@ -188,13 +173,58 @@ export default function ManageParkingLots() {
                 </NumberInput>
               </FormControl>
             </GridItem>
+            <GridItem>
+              <FormControl isRequired>
+                <FormLabel htmlFor="parking-lot-bike-capacity">
+                  Price per Hour:
+                </FormLabel>
+                <NumberInput
+                  id="parking-lot-price"
+                  onChange={valueAsNumber => setParkingPrice(valueAsNumber)}
+                  min={0}
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            </GridItem>
+            <GridItem colSpan={2}>
+              <FormControl isRequired>
+                <FormLabel htmlFor="parking-lot-latitude">Latitude:</FormLabel>
+                <NumberInput
+                  id="parking-lot-latitude"
+                  onChange={valueAsNumber => setParkingLatitude(valueAsNumber)}
+                  min={-90}
+                  max={90}
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            </GridItem>
+            <GridItem colSpan={2}>
+              <FormControl isRequired>
+                <FormLabel htmlFor="parking-lot-longitude">
+                  Longitude:
+                </FormLabel>
+                <NumberInput
+                  id="parking-lot-longitude"
+                  onChange={valueAsNumber => setParkingLongitude(valueAsNumber)}
+                  min={-180}
+                  max={180}
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            </GridItem>
+            <GridItem display="flex" alignItem="center" justify="flex-end">
+              <Button
+                w="full"
+                alignSelf={{ md: 'center', lg: 'flex-end' }}
+                onClick={createParkingLot}
+              >
+                Create Parking Lot
+              </Button>
+            </GridItem>
           </Grid>
-          <Button
-            alignSelf={{ md: 'center', lg: 'flex-end' }}
-            onClick={createParkingLot}
-          >
-            Create Parking Lot
-          </Button>
         </VStack>
       </TitledCard>
     </VStack>
