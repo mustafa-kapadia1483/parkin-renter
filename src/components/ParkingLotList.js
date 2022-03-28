@@ -1,7 +1,8 @@
-import { HStack, Text } from '@chakra-ui/react';
+import { Grid, GridItem, HStack, Text } from '@chakra-ui/react';
 import { onValue, ref } from 'firebase/database';
 import { useEffect, useState } from 'react';
 import database from '../firebase';
+import ParkingLotCard from './ParkingLotCard';
 
 const ParkingLotList = ({ uid }) => {
   const [parkingLots, setParkingLots] = useState(null);
@@ -14,13 +15,20 @@ const ParkingLotList = ({ uid }) => {
   }, [uid]);
 
   return (
-    <HStack spacing={5}>
+    <Grid
+      width="full"
+      templateColumns={{ lg: 'repeat(2, 1fr)' }}
+      autoRows
+      gap={4}
+    >
       {!parkingLots && <Text>No Parking Lots Found</Text>}
       {parkingLots &&
         Object.values(parkingLots).map(parkingLot => (
-          <Text>{parkingLot.name}</Text>
+          <GridItem key={parkingLot.name + uid}>
+            <ParkingLotCard parkingLot={parkingLot} />
+          </GridItem>
         ))}
-    </HStack>
+    </Grid>
   );
 };
 
