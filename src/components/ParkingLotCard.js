@@ -13,16 +13,34 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  useToast,
 } from '@chakra-ui/react';
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import { useRef } from 'react';
+import database from '../firebase';
+import { ref, remove } from 'firebase/database';
+import { useOutletContext } from 'react-router-dom';
 
-const ParkingLotCard = ({ parkingLot }) => {
+const ParkingLotCard = ({ parkingLot, parkingLotKey }) => {
+  const toast = useToast();
+  const { uid } = useOutletContext();
   const { name, latitude, longitude, address, price } = parkingLot;
   const { streetAddress, locality, landmark, city, pincode } = address;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
   const CardAlertDialog = () => {
+    const deleteHandler = () => {
+      onClose();
+      remove(ref(database, `renters/${uid}/parkingLots/${parkingLotKey}`)).then(
+        () => {
+          toast({
+            title: `${name} deleted`,
+            status: 'success',
+            isClosable: true,
+          });
+        }
+      );
+    };
     return (
       <>
         <AlertDialog
@@ -44,7 +62,7 @@ const ParkingLotCard = ({ parkingLot }) => {
                 <Button ref={cancelRef} onClick={onClose}>
                   Cancel
                 </Button>
-                <Button colorScheme="red" onClick={onClose} ml={3}>
+                <Button colorScheme="red" onClick={deleteHandler} ml={3}>
                   Delete
                 </Button>
               </AlertDialogFooter>

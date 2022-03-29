@@ -6,6 +6,7 @@ import ParkingLotCard from './ParkingLotCard';
 
 const ParkingLotList = ({ uid }) => {
   const [parkingLots, setParkingLots] = useState(null);
+  const [parkingLotsKeys, setParkingLotsKeys] = useState(null);
 
   useEffect(() => {
     const parkingLotsRef = ref(database, 'renters/' + uid + '/parkingLots');
@@ -23,9 +24,9 @@ const ParkingLotList = ({ uid }) => {
     >
       {!parkingLots && <Text>No Parking Lots Found</Text>}
       {parkingLots &&
-        Object.values(parkingLots).map(parkingLot => (
-          <GridItem key={parkingLot.name + uid}>
-            <ParkingLotCard parkingLot={parkingLot} />
+        Object.keys(parkingLots).map(key => (
+          <GridItem key={key}>
+            <ParkingLotCard parkingLotKey={key} parkingLot={parkingLots[key]} />
           </GridItem>
         ))}
     </Grid>
