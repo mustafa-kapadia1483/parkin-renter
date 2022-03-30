@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import ManageParkingLots from './components/ManageParkingLots';
 import DashboardHome from './components/DashboardHome';
+import Bookings from './components/Bookings';
 
 const theme = extendTheme({
   components: {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<DashboardHome />} />
             <Route path="manage-parking-lots" element={<ManageParkingLots />} />
+            <Route path="bookings" element={<Bookings />} />
           </Route>
         </Route>
       </Routes>

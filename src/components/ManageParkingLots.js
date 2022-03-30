@@ -56,13 +56,11 @@ export default function ManageParkingLots() {
       longitude: parseFloat(parkingLongitude),
       carCapacity: parseInt(parkingCarCapacity),
       bikeCapacity: parseInt(parkingBikeCapacity),
-      address: {
-        streetAddress: parkingStreetAddress,
-        locality: parkingLocality,
-        landmark: parkingLandmark,
-        pincode: parkingPincode,
-        city: parkingCity,
-      },
+      streetAddress: parkingStreetAddress,
+      locality: parkingLocality,
+      landmark: parkingLandmark,
+      pincode: parkingPincode,
+      city: parkingCity,
       price: parkingPrice,
     }).then(() => {
       toast({

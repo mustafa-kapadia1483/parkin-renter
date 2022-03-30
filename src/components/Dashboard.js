@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { FaBell } from 'react-icons/fa';
 import { FiMenu, FiSearch } from 'react-icons/fi';
+import { FaCalendarCheck } from 'react-icons/fa';
 import { MdHome } from 'react-icons/md';
 import { GoSettings } from 'react-icons/go';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
@@ -129,6 +130,13 @@ const Dashboard = () => {
       >
         <NavItem link={ReactRouterLink} to="/dashboard" icon={MdHome}>
           Home
+        </NavItem>
+        <NavItem
+          link={ReactRouterLink}
+          to="/dashboard/bookings"
+          icon={FaCalendarCheck}
+        >
+          Bookings
         </NavItem>
         <NavItem
           link={ReactRouterLink}

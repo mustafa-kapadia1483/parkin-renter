@@ -24,8 +24,17 @@ import { useOutletContext } from 'react-router-dom';
 const ParkingLotCard = ({ parkingLot, parkingLotKey }) => {
   const toast = useToast();
   const { uid } = useOutletContext();
-  const { name, latitude, longitude, address, price } = parkingLot;
-  const { streetAddress, locality, landmark, city, pincode } = address;
+  const {
+    name,
+    latitude,
+    longitude,
+    price,
+    streetAddress,
+    locality,
+    landmark,
+    city,
+    pincode,
+  } = parkingLot;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
   const CardAlertDialog = () => {

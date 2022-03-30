@@ -6,7 +6,6 @@ import ParkingLotCard from './ParkingLotCard';
 
 const ParkingLotList = ({ uid }) => {
   const [parkingLots, setParkingLots] = useState(null);
-  const [parkingLotsKeys, setParkingLotsKeys] = useState(null);
 
   useEffect(() => {
     const parkingLotsRef = ref(database, 'renters/' + uid + '/parkingLots');
