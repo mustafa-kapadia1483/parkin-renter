@@ -17,15 +17,31 @@ import database from '../firebase';
 
 const Bookings = () => {
   const { uid } = useOutletContext();
-  const [bookings, setBookings] = useState(null);
+  const [bookings, setBookings] = useState([]);
   // const [parkingLotsIdList, setparkingLotsIdList] = useState(null);
-  const [parkingLots, setParkingLots] = useState(null);
+  const [parkingLots, setParkingLots] = useState([]);
 
   useEffect(() => {
     const parkingLotsRef = ref(database, 'renters/' + uid + '/parkingLots');
     onValue(parkingLotsRef, snapshot => {
       setParkingLots(snapshot.val());
     });
+    const rentersBookings = [];
+    const bookingsRef = ref(database, 'TestBookings');
+    onValue(bookingsRef, snapshot => {
+      Object.values(snapshot.val()).forEach(val => {
+        Object.values(val).forEach(booking => {
+          if (
+            Object.values(parkingLots).some(
+              parking => parking.name === booking.parkName
+            )
+          ) {
+            rentersBookings.push(val);
+          }
+        });
+      });
+    });
+    setBookings(rentersBookings);
   }, [uid]);
   // fetch(
   //   `https://parkin-e5c4e-default-rtdb.firebaseio.com/renters/${uid}/parkingLots.json?shallow=true`
@@ -43,17 +59,30 @@ const Bookings = () => {
   // }, []);
   return (
     <TitledCard title="Bookings">
-      <Table variant="simple">
+      <Table size="sm" variant="simple">
         <Thead>
           <Tr>
             <Th>Parking Lot</Th>
             <Th>Date</Th>
             <Th>Start Time</Th>
-            <Th>End Time</Th>
+            <Th>Hours</Th>
             <Th>Status</Th>
             <Th>Amount</Th>
           </Tr>
         </Thead>
+        {bookings &&
+          bookings.map(booking =>
+            Object.values(booking).map(val => (
+              <Tr>
+                <Td>{val.parkName}</Td>
+                <Td>{val.givenDate}</Td>
+                <Td>{val.startTime}</Td>
+                <Td>{val.noHours}</Td>
+                <Td>{val.status}</Td>
+                <Td>{val.finalAmount}</Td>
+              </Tr>
+            ))
+          )}
       </Table>
     </TitledCard>
   );
