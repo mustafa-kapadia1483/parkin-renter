@@ -59,31 +59,35 @@ const Bookings = () => {
   // }, []);
   return (
     <TitledCard title="Bookings">
-      <Table size="sm" variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Parking Lot</Th>
-            <Th>Date</Th>
-            <Th>Start Time</Th>
-            <Th>Hours</Th>
-            <Th>Status</Th>
-            <Th>Amount</Th>
-          </Tr>
-        </Thead>
-        {bookings &&
-          bookings.map(booking =>
-            Object.values(booking).map(val => (
-              <Tr>
-                <Td>{val.parkName}</Td>
-                <Td>{val.givenDate}</Td>
-                <Td>{val.startTime}</Td>
-                <Td>{val.noHours}</Td>
-                <Td>{val.status}</Td>
-                <Td>{val.finalAmount}</Td>
-              </Tr>
-            ))
-          )}
-      </Table>
+      <TableContainer>
+        <Table size="sm" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>vhRegNo</Th>
+              <Th>Parking Lot</Th>
+              <Th>Status</Th>
+              <Th>Date</Th>
+              <Th>Start Time</Th>
+              <Th>Hours</Th>
+              <Th>Amount</Th>
+            </Tr>
+          </Thead>
+          {bookings &&
+            bookings.map(booking =>
+              Object.values(booking).map(val => (
+                <Tr>
+                  <Td>{val.vhRegNo}</Td>
+                  <Td>{val.parkName}</Td>
+                  <Td>{val.status}</Td>
+                  <Td>{val.givenDate}</Td>
+                  <Td>{val.startTime}</Td>
+                  <Td>{val.noHours}</Td>
+                  <Td>{val.finalAmount}</Td>
+                </Tr>
+              ))
+            )}
+        </Table>
+      </TableContainer>
     </TitledCard>
   );
 };
