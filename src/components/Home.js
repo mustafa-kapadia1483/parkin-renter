@@ -1,5 +1,9 @@
-import { ref, child, get } from 'firebase/database';
-import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  getAuth,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth';
 import {
   chakra,
   Box,
@@ -14,13 +18,15 @@ import {
   Input,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
   const user = auth.currentUser;
+  const [emailAddress, setEmailAddress] = useState('');
+  const [password, setPassword] = useState('');
   if (localStorage.getItem('user')) {
     navigate('/dashboard', { replace: true });
   }
@@ -50,6 +56,23 @@ const Home = () => {
         // ...
       });
   };
+  const signInButtonHandler = e => {
+    e.preventDefault();
+    createUserWithEmailAndPassword(auth, emailAddress, password)
+      .then(userCredential => {
+        // Signed in
+        const user = userCredential.user;
+        localStorage.setItem('user', JSON.stringify(user));
+        navigate('/dashboard', { replace: true });
+        // ...
+      })
+      .catch(error => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorCode, errorMessage);
+        // ..
+      });
+  };
   // const dbRef = ref(database);
   // get(child(dbRef, `users`))
   //   .then(snapshot => {
@@ -64,7 +87,13 @@ const Home = () => {
   //   });
 
   return (
-    <Box px={8} py={24} mx="auto">
+    <Flex
+      px={8}
+      py={[10, 24]}
+      mx="auto"
+      height={{ lg: '100vh' }}
+      align={{ lg: 'center' }}
+    >
       <SimpleGrid
         alignItems="center"
         w={{ base: 'full', xl: 11 / 12 }}
@@ -98,7 +127,7 @@ const Home = () => {
           </chakra.p>
         </GridItem>
         <GridItem colSpan={{ base: 'auto', md: 4 }}>
-          <Box as="form" mb={6} rounded="lg" shadow="xl">
+          <Box mb={6} rounded="lg" shadow="xl">
             <Center pb={0} color={useColorModeValue('gray.700', 'gray.600')}>
               <p pt={2}>Start renting now</p>
             </Center>
@@ -111,34 +140,35 @@ const Home = () => {
               borderColor={useColorModeValue('gray.200', 'gray.700')}
             >
               <Flex>
-                <VisuallyHidden>First Name</VisuallyHidden>
-                <Input
-                  mt={0}
-                  type="text"
-                  placeholder="First Name"
-                  required="true"
-                />
-              </Flex>
-              <Flex>
                 <VisuallyHidden>Email Address</VisuallyHidden>
                 <Input
+                  value={emailAddress}
+                  onChange={e => setEmailAddress(e.target.value)}
                   mt={0}
                   type="email"
                   placeholder="Email Address"
-                  required="true"
+                  required={true}
                 />
               </Flex>
               <Flex>
                 <VisuallyHidden>Password</VisuallyHidden>
                 <Input
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
                   mt={0}
                   type="password"
                   placeholder="Password"
-                  required="true"
+                  required={true}
                 />
               </Flex>
-              <Button colorScheme="brand" w="full" py={2} type="submit">
-                Sign up for free
+              <Button
+                onClick={e => signInButtonHandler(e)}
+                colorScheme="gray"
+                w="full"
+                py={2}
+                type="submit"
+              >
+                Sign in / Sign up
               </Button>
             </SimpleGrid>
             <Flex px={6} py={4}>
@@ -173,7 +203,7 @@ const Home = () => {
           </chakra.p>
         </GridItem>
       </SimpleGrid>
-    </Box>
+    </Flex>
   );
 };
 
